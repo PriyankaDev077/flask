@@ -27,3 +27,34 @@ def login_form():
             </body>
                 </html> '''
 @app.route("/login",methods=["POST"])
+def login():
+    username=request.form.get('username')
+    password=request.form.get('password')
+    if username==USERNAME and password==PASSWORD:
+        return '''
+        <!DOCTYPE html>
+        <html lang='en'>
+        <head>
+        <meta charset="UTF-8">
+        <title>Welcome</title>
+        </head>
+        <body>
+        <h2>Welcome,{}</h2>
+        <p>you are successfully loggedin!</p>
+        </body>
+        </html>'''.format(username)
+    else:
+        return"""
+        <!DOCTYPE html>
+        <html lang='en'>
+        <head><meta charset="UTF-8">
+        <title>Welcome</title>
+        </head>
+        <body>
+        <h2>login failed</h2>
+        <p>incorrect username or password please try again</p>
+        <a href='/'>back to login</a>
+        </body>
+        </html>"""
+if __name__=='__main__':
+    app.run(debug=True)        
