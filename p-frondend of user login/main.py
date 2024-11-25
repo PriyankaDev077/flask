@@ -1,60 +1,50 @@
-from flask import Flask, request, redirect,url_for
+from flask import Flask,request,render_template_string
+import requests
 app=Flask(__name__)
-app.secret_key='your_secret_key'
-USERNAME='duckey'
-PASSWORD='sugga07'
-@app.route('/',methods=['GET'])
-def login_form():
-    return ''' 
-    <!DOCTYPE HTML>
-    <html lang='en'>
-    <head>
-    <title>
-    login
-    </title>
-    </head>
-    <body>
-    <h2>
-    login
-    </h2>
-    <form action="/login" method="post">
-    <label for ="username">username:</label>
-    <input type="text" id="username" name="username"><br><br>
-    <label for ="password">password:</label>
-    <input type="text" id="password" name="password"><br><br>
-    <input type="submit" value="login">
-        </form>
-            </body>
-                </html> '''
-@app.route("/login",methods=["POST"])
-def login():
-    username=request.form.get('username')
-    password=request.form.get('password')
-    if username==USERNAME and password==PASSWORD:
-        return '''
-        <!DOCTYPE html>
-        <html lang='en'>
-        <head>
-        <meta charset="UTF-8">
-        <title>Welcome</title>
-        </head>
-        <body>
-        <h2>Welcome,{}</h2>
-        <p>you are successfully loggedin!</p>
-        </body>
-        </html>'''.format(username)
+API_KEY="ba5fe65e6989c100e0f5e80028c2f9c8"
+HTML_TEMPLATE="""
+<!DOCTYPE html>
+<html>
+<head>
+<title>
+weather app
+</title>
+</head>
+<body>
+<h1>weather prediction app</h1>
+<form method="post">
+<input type='Text' name='City' placeholder='Enter City Name' required>
+<button type='submit'>get weather</button>
+</form>
+{% if weather %}
+<h2>Weather in {{ weather.city }}</h2>
+<p>Temperature: {{ weather.temperature }} °C</p>
+<p>Description: {{ weather.description }}</p>
+<img src="http://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="Weather Icon">
+{% endif %}
+</body>
+</html>
+"""
+def get_weather(city):
+    url="fhttp://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
+    response=requests.get(url)
+    if response.status_code==200:
+        data=response.json()
+        return{
+'city': data['name'],
+'temperature': data['main']['temp'],
+'description': data['weather'][0]['description'],
+'icon': data['weather'][0]['icon']
+        }
     else:
-        return"""
-        <!DOCTYPE html>
-        <html lang='en'>
-        <head><meta charset="UTF-8">
-        <title>Welcome</title>
-        </head>
-        <body>
-        <h2>login failed</h2>
-        <p>incorrect username or password please try again</p>
-        <a href='/'>back to login</a>
-        </body>
-        </html>"""
-if __name__=='__main__':
-    app.run(debug=True)        
+        return None
+@app.route('/',methods=['GET','POST'])
+def index():
+    weather_data=None
+    if request.method=='POST':
+        city=request.form.get('city')
+        if city :
+            weather_data=get_weather(city)
+    return render_template_string(HTML_TEMPLATE,weather=weather_data)
+if __name__=="__main__":
+    app.run(debug=True)            
