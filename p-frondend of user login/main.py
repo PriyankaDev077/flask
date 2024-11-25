@@ -1,8 +1,8 @@
 from flask import Flask, request, redirect,url_for
 app=Flask(__name__)
 app.secret_key='your_secret_key'
-USERNAME='priyanka07'
-PASSWORD='priy1nk1'
+USERNAME='duckey'
+PASSWORD='sugga07'
 @app.route('/',methods=['GET'])
 def login_form():
     return ''' 
