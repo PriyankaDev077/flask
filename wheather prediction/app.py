@@ -13,7 +13,7 @@ weather app
 <body>
 <h1>weather prediction app</h1>
 <form method="post">
-<input type='Text' name='City' placeholder='Enter City Name' required>
+<input type='text' name='City' placeholder='Enter City Name' required>
 <button type='submit'>get weather</button>
 </form>
 {% if weather %}
@@ -26,7 +26,7 @@ weather app
 </html>
 """
 def get_weather(city):
-    url="fhttp://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
+    url=f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
     response=requests.get(url)
     if response.status_code==200:
         data=response.json()
